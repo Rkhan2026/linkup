@@ -13,6 +13,11 @@ dotenv.config();
 // Access the PORT environment variable from the .env file
 const PORT = process.env.PORT;
 
+// Middleware to parse JSON data in the request body.
+// This is required to handle incoming JSON payloads in POST, PUT, or PATCH requests.
+// Without this middleware, req.body will be undefined for JSON data.
+app.use(express.json());
+
 //app.use()://A method in Express.js that adds middleware or routes to the application.
             //It ensures that any incoming request with a specific path is processed by 
             //the provided middleware or router.
