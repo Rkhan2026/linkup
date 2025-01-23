@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.route.js";
 import { connectDB } from "./lib/db.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -17,6 +18,13 @@ const PORT = process.env.PORT;
 // This is required to handle incoming JSON payloads in POST, PUT, or PATCH requests.
 // Without this middleware, req.body will be undefined for JSON data.
 app.use(express.json());
+
+
+
+
+app.use(cookieParser());
+
+
 
 //app.use()://A method in Express.js that adds middleware or routes to the application.
             //It ensures that any incoming request with a specific path is processed by 
