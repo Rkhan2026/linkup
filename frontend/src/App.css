@@ -1,3 +1,14 @@
+/*
+App.css =>
+This is a stylesheet that typically contains styles specific to the App component. It's 
+usually used for styling the App.js (or App.jsx) component and 
+its child components.
+
+While index.css is used for global styles, App.css is a good place to put styles that are 
+only relevant to the root component of your app (App.js or App.jsx) and its immediate 
+child components.
+
+*/
 #root {
   max-width: 1280px;
   margin: 0 auto;
