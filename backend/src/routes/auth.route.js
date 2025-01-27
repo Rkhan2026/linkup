@@ -29,7 +29,6 @@ const router = express.Router();
 // This route will handle new user registrations by collecting the user's details and creating an account.
 router.post("/signup",signup);
 
-
 // Defining a POST route for user login, which triggers the `login` controller function.
 // This route will authenticate the user by verifying their credentials (username/password) and provide a session or token.
 router.post("/login",login);

@@ -19,13 +19,25 @@ CSS and Styles: It is common to import global styles in main.jsx, such as a glob
 file, or configure libraries like tailwindcss if used in the project.
 */
 
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
+
+// Enables additional checks and warnings for development builds.
+import { StrictMode } from 'react'; 
+// Allows rendering the React app into the root DOM element.
+import { createRoot } from 'react-dom/client'; 
+// Enables routing in the app using react-router.
+import { BrowserRouter } from "react-router-dom"; 
+// Importing the global styles for the application.
+import './index.css'; 
+// Importing the main App component of the application.
+import App from './App.jsx'; 
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
-  </StrictMode>,
-)
+      {/* StrictMode helps identify potential problems in the app during development */}
+      <BrowserRouter>
+          {/* BrowserRouter is used to enable routing with the browser's history API */}
+          <App />
+          {/* The main App component is rendered inside the BrowserRouter for routing */}
+      </BrowserRouter>
+  </StrictMode>
+);
