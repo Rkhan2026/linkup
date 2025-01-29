@@ -9,5 +9,39 @@ to ensure that the styles are globally available to all components.
 /* Importing the Tailwind CSS (4.0) base styles */
 @import "tailwindcss";
 /* Importing DaisyUI (5.0.0 beta-2) plugin, which provides a set of customizable UI 
-components for Tailwind CSS */
-@plugin "daisyui";
+components for Tailwind CSS and here we are importing the themes for the web app */
+@plugin "daisyui" {
+    themes:
+        "light",
+        "dark",
+        "cupcake",
+        "bumblebee",
+        "emerald",
+        "corporate",
+        "synthwave",
+        "retro",
+        "cyberpunk",
+        "valentine",
+        "halloween",
+        "garden",
+        "forest",
+        "aqua",
+        "lofi",
+        "pastel",
+        "fantasy",
+        "wireframe",
+        "black",
+        "luxury",
+        "dracula",
+        "cmyk",
+        "autumn",
+        "business",
+        "acid",
+        "lemonade",
+        "night",
+        "coffee",
+        "winter",
+        "dim",
+        "nord",
+        "sunset";
+}
