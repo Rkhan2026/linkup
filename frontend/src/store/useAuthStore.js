@@ -36,6 +36,8 @@ export const useAuthStore = create((set, get) => ({
   isLoggingIn: false, // Indicates if the login process is ongoing.
   isUpdatingProfile: false, // Indicates if the profile update process is ongoing.
   isCheckingAuth: true, // Indicates if the authentication check is ongoing.
+  onlineUsers: [],
+
 
   // Method to check the user's authentication status.
   checkAuth: async () => {
