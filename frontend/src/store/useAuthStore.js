@@ -28,113 +28,162 @@ import toast from "react-hot-toast";
 // Defining the base URL based on the environment (development or production).
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : "/";
 
+//Importing the io function from the socket.io-client package, 
+//which allows your frontend application to establish a WebSocket connection 
+//with a backend server running socket.io.
+import { io } from "socket.io-client";
+
 // Creating the Zustand store for managing authentication-related state.
 export const useAuthStore = create((set, get) => ({
   // State properties to manage authentication data and status.
   authUser: null, // Holds the authenticated user's information.
-  isSigningUp: false, // Indicates if the signup process is ongoing.
-  isLoggingIn: false, // Indicates if the login process is ongoing.
-  isUpdatingProfile: false, // Indicates if the profile update process is ongoing.
-  isCheckingAuth: true, // Indicates if the authentication check is ongoing.
-  onlineUsers: [],
-
+  isSigningUp: false, // Flag to indicate the signup process.
+  isLoggingIn: false, // Flag to indicate the login process.
+  isUpdatingProfile: false, // Flag to indicate the profile update process.
+  isCheckingAuth: true, // Flag to indicate if authentication check is in progress.
+  onlineUsers: [], // Stores the list of online users.
+  socket: null, // Stores the active socket instance.
 
   // Method to check the user's authentication status.
   checkAuth: async () => {
     try {
-      // Making an API call to check if the user is authenticated.
+      // API call to verify authentication status.
       const res = await axiosInstance.get("/auth/check");
 
-      // Updating the state with the authenticated user's data.
+      // Updating the store with authenticated user data.
       set({ authUser: res.data });
+
+      // Establish a socket connection upon successful authentication.
+      get().connectSocket();
     } catch (error) {
-      // Logging any errors and resetting the authUser state to null.
       console.log("Error in checkAuth:", error);
+
+      // Reset authentication state on error.
       set({ authUser: null });
     } finally {
-      // Setting isCheckingAuth to false to indicate the process has completed.
+      // Indicate that the authentication check is complete.
       set({ isCheckingAuth: false });
     }
   },
 
-  // Method to sign up a new user.
+  // Method to handle user signup.
   signup: async (data) => {
-    set({ isSigningUp: true }); // Setting isSigningUp to true during the signup process.
+    set({ isSigningUp: true }); // Indicate signup in progress.
     try {
-      // Sending a POST request to the signup endpoint with user data.
+      // API request to create a new user.
       const res = await axiosInstance.post("/auth/signup", data);
 
-      // Storing the newly created user's data in the state.
+      // Store user data on successful signup.
       set({ authUser: res.data });
 
-      // Displaying a success notification.
+      // Show success notification.
       toast.success("Account created successfully");
+
+      // Establish a socket connection.
+      get().connectSocket();
     } catch (error) {
-      // Displaying an error notification with the message from the server.
-      toast.error(error.response.data.message);
+      // Display error message received from the server.
+      toast.error(error.response?.data?.message || "Signup failed");
     } finally {
-      // Setting isSigningUp to false to indicate the process has ended.
+      // Reset signup state.
       set({ isSigningUp: false });
     }
   },
 
-  // Method to log in a user.
+  // Method to handle user login.
   login: async (data) => {
-    set({ isLoggingIn: true }); // Setting isLoggingIn to true during the login process.
+    set({ isLoggingIn: true }); // Indicate login in progress.
     try {
-      // Sending a POST request to the login endpoint with user credentials.
+      // API request to authenticate user.
       const res = await axiosInstance.post("/auth/login", data);
 
-      // Storing the authenticated user's data in the state.
+      // Store user data on successful login.
       set({ authUser: res.data });
 
-      // Displaying a success notification.
+      // Show success notification.
       toast.success("Logged in successfully");
+
+      // Establish a socket connection.
+      get().connectSocket();
     } catch (error) {
-      // Displaying an error notification with the message from the server.
-      toast.error(error.response.data.message);
+      // Display error message received from the server.
+      toast.error(error.response?.data?.message || "Login failed");
     } finally {
-      // Setting isLoggingIn to false to indicate the process has ended.
+      // Reset login state.
       set({ isLoggingIn: false });
     }
   },
 
-  // Method to log out the user.
+  // Method to handle user logout.
   logout: async () => {
     try {
-      // Sending a POST request to the logout endpoint.
+      // API request to log out the user.
       await axiosInstance.post("/auth/logout");
 
-      // Resetting the authUser state to null upon logout.
+      // Clear authentication state.
       set({ authUser: null });
 
-      // Displaying a success notification.
+      // Show success notification.
       toast.success("Logged out successfully");
+
+      // Disconnect socket connection.
+      get().disconnectSocket();
     } catch (error) {
-      // Displaying an error notification with the message from the server.
-      toast.error(error.response.data.message);
+      // Display error message received from the server.
+      toast.error(error.response?.data?.message || "Logout failed");
     }
   },
 
   // Method to update the authenticated user's profile.
   updateProfile: async (data) => {
-    set({ isUpdatingProfile: true }); // Setting isUpdatingProfile to true during the update process.
+    set({ isUpdatingProfile: true }); // Indicate profile update in progress.
     try {
-      // Sending a PUT request to the update-profile endpoint with updated data.
+      // API request to update user profile.
       const res = await axiosInstance.put("/auth/update-profile", data);
 
-      // Updating the authUser state with the new profile data.
+      // Update user data in store.
       set({ authUser: res.data });
 
-      // Displaying a success notification.
+      // Show success notification.
       toast.success("Profile updated successfully");
     } catch (error) {
-      // Logging errors and displaying an error notification.
-      console.log("Error in update profile:", error);
-      toast.error(error.response.data.message);
+      console.log("Error in updateProfile:", error);
+
+      // Display error message received from the server.
+      toast.error(error.response?.data?.message || "Profile update failed");
     } finally {
-      // Setting isUpdatingProfile to false to indicate the process has ended.
+      // Reset profile update state.
       set({ isUpdatingProfile: false });
+    }
+  },
+
+  // Method to establish a socket connection.
+  connectSocket: () => {
+    const { authUser } = get();
+    if (!authUser || get().socket?.connected) return; // Avoid duplicate connections.
+
+    // Initialize socket connection with user ID.
+    const socket = io(BASE_URL, {
+      query: {
+        userId: authUser._id,
+      },
+    });
+
+    socket.connect();
+
+    // Store the socket instance in the state.
+    set({ socket });
+
+    // Listen for online users update.
+    socket.on("getOnlineUsers", (userIds) => {
+      set({ onlineUsers: userIds });
+    });
+  },
+
+  // Method to disconnect the socket connection.
+  disconnectSocket: () => {
+    if (get().socket?.connected) {
+      get().socket.disconnect();
     }
   },
 }));

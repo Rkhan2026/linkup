@@ -1,3 +1,9 @@
+import { useChatStore } from "../store/useChatStore"; // Importing the chat store for managing state
+
+import Sidebar from "../components/Sidebar"; // Importing the sidebar component
+import NoChatSelected from "../components/NoChatSelected"; // Component to display when no chat is selected
+import ChatContainer from "../components/ChatContainer"; // Component to display the chat window
+
 /*
 HomePage.jsx =>
 This  file is the main entry point for the chat application's home screen. 
@@ -5,11 +11,6 @@ Its primary purpose is to structure and display the chat interface, including th
 chat container, and a placeholder when no chat is selected.
 */
 
-import { useChatStore } from "../store/useChatStore"; // Importing the chat store for managing state
-
-import Sidebar from "../components/Sidebar"; // Importing the sidebar component
-import NoChatSelected from "../components/NoChatSelected"; // Component to display when no chat is selected
-import ChatContainer from "../components/ChatContainer"; // Component to display the chat window
 
 const HomePage = () => {
   const { selectedUser } = useChatStore(); // Extracting selectedUser from the chat store

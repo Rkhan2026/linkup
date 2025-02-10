@@ -1,3 +1,7 @@
+import { useState } from "react"; // Importing useState hook from React to manage local state.
+import { useAuthStore } from "../store/useAuthStore"; // Importing the useAuthStore hook for accessing authentication state and actions.
+import { Camera, Mail, User } from "lucide-react"; // Importing icons from lucide-react for user profile, email, and camera.
+
 /*
 ProfilePage.jsx=>
 This file under the pages folder is a common practice 
@@ -8,10 +12,6 @@ will be routed to by react-router-dom. This follows the practice of organizing c
 by their type (e.g., pages, components, hooks, etc.).
 */
 
-
-import { useState } from "react"; // Importing useState hook from React to manage local state.
-import { useAuthStore } from "../store/useAuthStore"; // Importing the useAuthStore hook for accessing authentication state and actions.
-import { Camera, Mail, User } from "lucide-react"; // Importing icons from lucide-react for user profile, email, and camera.
 
 const ProfilePage = () => {
   // Extracting authentication user data, update status, and updateProfile method from the auth store.
@@ -37,7 +37,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="h-screen pt-20">
+    <div className="h-screen pt-8">
       <div className="max-w-2xl mx-auto p-4 py-8">
         <div className="bg-base-300 rounded-xl p-6 space-y-8">
           {/* Profile Header */}

@@ -12,11 +12,8 @@ import cookieParser from "cookie-parser";
 import messageRoutes from "./routes/message.route.js";
 // Importing the CORS middleware to enable Cross-Origin Resource Sharing for the application.
 import cors from "cors";
-
-
-// Creating an instance of the Express application.
-// This instance `app` will be used to define routes, middleware, and handle HTTP requests.
-const app = express();
+// Importing Express app and HTTP server from socket.js
+import { app, server } from "./lib/socket.js";
 
 //app.use()-->
     //A method in Express.js that adds middleware or routes to the application.
@@ -83,7 +80,27 @@ app.use("/api/auth", authRoutes);
 // For example, a GET request to "/api/messages" will trigger the corresponding route in `messageRoutes`.
 app.use("/api/messages", messageRoutes);
 
-app.listen(PORT,()=>{
+
+/*
+Why server.listen(PORT, ...) and not app.listen(PORT, ...)?
+
+In my setup, we are using both Express (app) and Socket.IO (io), and the 
+reason we use server.listen(PORT, ...) instead of app.listen(PORT, ...) is 
+because Socket.IO requires a raw HTTP server to work properly.
+
+Key Differences=>
+
+app.listen(PORT, ...) -- > 
+Used when you only need an Express server to handle HTTP requests (e.g., REST API).
+
+server.listen(PORT, ...) -->
+Used when you need both HTTP requests (app) and real-time communication (io).
+
+Since server is created using http.createServer(app), it can handle both:
+This ensures both Express routes and WebSocket connections run on the same server.
+*/
+
+server.listen(PORT,()=>{
     console.log("Server running on PORT "+PORT);
     connectDB();
 })

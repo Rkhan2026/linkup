@@ -26,36 +26,49 @@ lifecycle methods, and any necessary data fetching. You would pass data to child
 as props.
 */
 
-import React from 'react'
+import React, { useEffect } from "react"; 
+// Importing React and the useEffect hook to handle side effects like checking authentication on mount.
 
-import Navbar from "./components/Navbar";
+import Navbar from "./components/Navbar"; 
+// Importing the Navbar component to be displayed on all pages.
 
-
-import HomePage from "./pages/HomePage";
+import HomePage from "./pages/HomePage"; 
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
+// Importing different page components to be rendered based on the route.
 
-import { Routes, Route, Navigate } from "react-router-dom";
-import { useAuthStore } from "./store/useAuthStore";
+import { Routes, Route, Navigate } from "react-router-dom"; 
+// Importing routing functionalities from React Router for navigation.
 
-import { Loader } from "lucide-react";
-import { useThemeStore } from "./store/useThemeStore";
+import { useAuthStore } from "./store/useAuthStore"; 
+// Importing custom authentication store (zustand store) to manage user authentication state.
 
-import { Toaster } from "react-hot-toast";
-import { useEffect } from "react";
+import { Loader } from "lucide-react"; 
+// Importing a loader icon from Lucide React to display while checking authentication status.
+
+import { useThemeStore } from "./store/useThemeStore"; 
+// Importing theme store to manage the application's theme.
+
+import { Toaster } from "react-hot-toast"; 
+// Importing toast notifications for displaying messages.
 
 const App = () => {
-  const { authUser, checkAuth, isCheckingAuth} = useAuthStore();
+  // Extracting authentication-related state and functions from the auth store.
+  const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  
+  // Extracting theme state from the theme store.
   const { theme } = useThemeStore();
 
+  // useEffect hook to check authentication status when the component mounts.
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+    checkAuth(); // Calls the checkAuth function to verify user authentication status.
+  }, [checkAuth]); // Runs the effect when checkAuth function reference changes.
 
-  console.log({ authUser });
+  console.log({ authUser }); // Logging the authUser state for debugging purposes.
 
+  // If authentication is still being checked and no user is authenticated, show a loading spinner.
   if (isCheckingAuth && !authUser)
     return (
       <div className="flex items-center justify-center h-screen">
@@ -64,21 +77,34 @@ const App = () => {
     );
 
   return (
-    <div data-theme={theme}>
-    
-      <Navbar></Navbar>
-    
+    // Applying the theme dynamically using the data-theme attribute.
+    <div data-theme={theme}> 
+      
+      {/* Rendering the Navbar component, which remains consistent across pages */}
+      <Navbar />
+
+      {/* Defining application routes using React Router */}
       <Routes>
+        {/* If authenticated, show HomePage; otherwise, redirect to login */}
         <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
+
+        {/* If not authenticated, show SignUpPage; otherwise, redirect to HomePage */}
         <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
+
+        {/* If not authenticated, show LoginPage; otherwise, redirect to HomePage */}
         <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
+
+        {/* Always allow access to SettingsPage */}
         <Route path="/settings" element={<SettingsPage />} />
+
+        {/* If authenticated, show ProfilePage; otherwise, redirect to login */}
         <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
       </Routes>
-    
-      <Toaster></Toaster>
-    </div>
-  )
-}
 
-export default App
+      {/* Displaying toast notifications for user feedback */}
+      <Toaster />
+    </div>
+  );
+};
+
+export default App; // Exporting the App component to be used in index.js or main entry file.
