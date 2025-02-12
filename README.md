@@ -1,6 +1,8 @@
 # linkup
 Realtime Chat Application
 
+Demo: https://linkup-4spq.onrender.com
+
 Tech stack: MongoDB + Express + Node.js + Socket.io + React + Lucide React + React-Router + Zustand + Axios + TailwindCSS + Daisy UI
 
 ![alt text](image.png)
