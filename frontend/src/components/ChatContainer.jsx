@@ -29,7 +29,7 @@ Message List: Renders text messages and image attachments.
 import { useChatStore } from "../store/useChatStore"; // Importing the custom chat store to access chat-related state and actions
 import { useEffect, useRef } from "react"; // useEffect for handling side effects, useRef for referencing DOM elements
 
-import ChatHeader from "./Chatheader"; // Importing the chat header component for displaying conversation details
+import ChatHeader from "./ChatHeader"; // Importing the chat header component for displaying conversation details
 import MessageInput from "./MessageInput"; // Importing the message input component for sending messages
 import MessageSkeleton from "./skeletons/MessageSkeleton"; // Importing a skeleton component for showing a loading state
 import { useAuthStore } from "../store/useAuthStore"; // Importing the auth store to get the current authenticated user
