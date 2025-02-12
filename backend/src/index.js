@@ -14,6 +14,8 @@ import messageRoutes from "./routes/message.route.js";
 import cors from "cors";
 // Importing Express app and HTTP server from socket.js
 import { app, server } from "./lib/socket.js";
+// Importing the 'path' module from Node.js to work with file and directory paths
+import path from "path";
 
 //app.use()-->
     //A method in Express.js that adds middleware or routes to the application.
@@ -57,6 +59,9 @@ dotenv.config();
 // Access the PORT environment variable from the .env file
 const PORT = process.env.PORT;
 
+// Resolving the absolute path of the current directory using the 'path' module
+const __dirname = path.resolve();
+
 // Middleware to parse JSON data in the request body.
 // This is required to handle incoming JSON payloads in POST, PUT, or PATCH requests.
 // Without this middleware, req.body will be undefined for JSON data.
@@ -80,6 +85,17 @@ app.use("/api/auth", authRoutes);
 // For example, a GET request to "/api/messages" will trigger the corresponding route in `messageRoutes`.
 app.use("/api/messages", messageRoutes);
 
+
+// Check if the application is running in production mode
+if (process.env.NODE_ENV === "production") {
+  // Serve static files from the frontend 'dist' directory
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+  // Handle all other routes by serving the frontend's index.html
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+  });
+}
 
 /*
 Why server.listen(PORT, ...) and not app.listen(PORT, ...)?
